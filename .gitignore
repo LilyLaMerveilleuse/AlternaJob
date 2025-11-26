@@ -1,3 +1,5 @@
 /Back/.idea
 *.db
 /Back/target
+/.claude
+/.idea
