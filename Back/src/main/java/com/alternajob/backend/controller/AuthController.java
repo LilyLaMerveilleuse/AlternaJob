@@ -21,11 +21,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO dto) {
-        try {
-            return ResponseEntity.ok(userService.login(dto));
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
-        }
+        return ResponseEntity.ok(userService.login(dto));
     }
 
     @PostMapping("/register/student")
@@ -35,6 +31,7 @@ public class AuthController {
                 .status(HttpStatus.CREATED)
                 .body(userService.registerStudent(dto));
     }
+
 
     @PostMapping("/register/pro")
     public ResponseEntity<UserResponseDTO> registerPro(

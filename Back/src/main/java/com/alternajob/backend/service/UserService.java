@@ -68,18 +68,27 @@ public class UserService {
 
     @Transactional
     public UserResponseDTO registerStudent(UserRequestDTO userRequestDTO) {
+        if (userRepository.findByUsername(userRequestDTO.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("Username already exists");
+        }
         userRequestDTO.setRole(Role.ETUDIANT);
         return createUser(userRequestDTO);
     }
 
     @Transactional
     public UserResponseDTO registerPro(UserRequestDTO userRequestDTO) {
+        if (userRepository.findByUsername(userRequestDTO.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("Username already exists");
+        }
         userRequestDTO.setRole(Role.PROFESSIONNEL);
         return createUser(userRequestDTO);
     }
 
     @Transactional
     public UserResponseDTO registerAdmin(UserRequestDTO userRequestDTO) {
+        if (userRepository.findByUsername(userRequestDTO.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("Username already exists");
+        }
         userRequestDTO.setRole(Role.ADMIN);
         return createUser(userRequestDTO);
     }
