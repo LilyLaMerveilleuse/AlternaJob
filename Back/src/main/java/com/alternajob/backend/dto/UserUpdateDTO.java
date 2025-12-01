@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserUpdateDTO {
 
-    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+    @Size(min = 3, max = 50, message = "Le pseudonyme doit être entre 3 et 50 caractères")
     private String username;
 
     @Size(min = 6, message = "Password must be at least 6 characters")

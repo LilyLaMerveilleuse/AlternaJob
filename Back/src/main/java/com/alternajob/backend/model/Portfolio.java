@@ -1,4 +1,4 @@
-﻿package com.alternajob.backend.model;
+package com.alternajob.backend.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

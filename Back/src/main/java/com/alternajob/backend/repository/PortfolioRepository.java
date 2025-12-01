@@ -1,4 +1,4 @@
-﻿package com.alternajob.backend.repository;
+package com.alternajob.backend.repository;
 
 import com.alternajob.backend.model.Portfolio;
 import org.springframework.data.jpa.repository.JpaRepository;

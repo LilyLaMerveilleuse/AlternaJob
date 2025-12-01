@@ -1,4 +1,4 @@
-﻿package com.alternajob.backend.service;
+package com.alternajob.backend.service;
 
 import com.alternajob.backend.model.Portfolio;
 import com.alternajob.backend.model.User;

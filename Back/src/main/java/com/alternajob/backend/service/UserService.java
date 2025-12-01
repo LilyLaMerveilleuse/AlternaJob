@@ -1,10 +1,14 @@
 package com.alternajob.backend.service;
 
+import com.alternajob.backend.dto.LoginRequestDTO;
+import com.alternajob.backend.dto.LoginResponseDTO;
 import com.alternajob.backend.dto.UserRequestDTO;
 import com.alternajob.backend.dto.UserResponseDTO;
 import com.alternajob.backend.dto.UserUpdateDTO;
+import com.alternajob.backend.model.Role;
 import com.alternajob.backend.model.User;
 import com.alternajob.backend.repository.UserRepository;
+import com.alternajob.backend.security.JWTService;
 import org.jasypt.encryption.StringEncryptor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,13 +24,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final StringEncryptor stringEncryptor;
     private final PasswordEncoder passwordEncoder;
+    private final JWTService jwtService;
 
     public UserService(UserRepository userRepository,
-                       @Qualifier("jasyptStringEncryptor") StringEncryptor stringEncryptor,
-                       PasswordEncoder passwordEncoder) {
+            @Qualifier("jasyptStringEncryptor") StringEncryptor stringEncryptor,
+            PasswordEncoder passwordEncoder, JWTService jwtService) {
         this.userRepository = userRepository;
         this.stringEncryptor = stringEncryptor;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     @Transactional(readOnly = true)
@@ -53,12 +59,47 @@ public class UserService {
         User user = new User();
         user.setUsername(userRequestDTO.getUsername());
         user.setPassword(hashPassword(userRequestDTO.getPassword()));
-        user.setRole(userRequestDTO.getRole());
         user.setNom(encryptData(userRequestDTO.getNom()));
         user.setPrenom(encryptData(userRequestDTO.getPrenom()));
 
         User savedUser = userRepository.save(user);
         return convertToResponseDTO(savedUser);
+    }
+
+    @Transactional
+    public UserResponseDTO registerStudent(UserRequestDTO userRequestDTO) {
+        userRequestDTO.setRole(Role.ETUDIANT);
+        return createUser(userRequestDTO);
+    }
+
+    @Transactional
+    public UserResponseDTO registerPro(UserRequestDTO userRequestDTO) {
+        userRequestDTO.setRole(Role.PROFESSIONNEL);
+        return createUser(userRequestDTO);
+    }
+
+    @Transactional
+    public UserResponseDTO registerAdmin(UserRequestDTO userRequestDTO) {
+        userRequestDTO.setRole(Role.ADMIN);
+        return createUser(userRequestDTO);
+    }
+
+    @Transactional(readOnly = true)
+    public LoginResponseDTO login(LoginRequestDTO dto) {
+        User user = userRepository.findByUsername(dto.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        String token = jwtService.generateToken(user.getUsername(), user.getRole().name());
+
+        LoginResponseDTO response = new LoginResponseDTO();
+        response.setToken(token);
+        response.setUsername(user.getUsername());
+        response.setRole(user.getRole());
+        return response;
     }
 
     @Transactional
