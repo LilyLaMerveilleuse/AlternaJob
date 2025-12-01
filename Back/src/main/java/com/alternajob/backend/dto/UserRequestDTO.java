@@ -21,12 +21,11 @@ public class UserRequestDTO {
     @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
 
-    @NotNull(message = "Role is required")
-    private Role role;
-
     @NotBlank(message = "Nom is required")
     private String nom;
 
     @NotBlank(message = "Prenom is required")
     private String prenom;
+
+    private Role role;
 }
